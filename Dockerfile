@@ -21,3 +21,16 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runti
     && curl -SL --output nirvana.zip $NIRVANA_ZIP_URL \
     && unzip -d /opt/nirvana nirvana.zip \
     && rm nirvana.zip
+
+# Need this version as the Download.dll is not in the newest package...
+RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-x64.tar.gz \
+    && dotnet_sha512='41cc13f14dd7721a079bdd0ab489de40e9d4f32787239a26e7d10fcb0020a8e78d446c3b430b4bf80a557a925b3ca87d7981bfda4bbf9495cc44b1d42d877c40' \
+    && echo "$dotnet_sha512 dotnet.tar.gz" | sha512sum -c - \
+    && mkdir -p /usr/share/dotnet \
+    && tar -zxf dotnet.tar.gz -C /usr/share/dotnet \
+    && rm dotnet.tar.gz \
+    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
+    && mkdir -p /opt/nirvana \
+    && curl -SL --output nirvana.zip https://github.com/Illumina/Nirvana/releases/download/v3.14.0/Nirvana-3.14.0-dotnet-2.1.0.zip \
+    && unzip -d /opt/nirvana_3.14.0 nirvana.zip \
+    && rm nirvana.zip
